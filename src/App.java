@@ -1,18 +1,24 @@
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.net.http.HttpResponse.BodyHandlers;
+import java.util.List;
+import java.util.Map;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        String url = "https://raw.githubusercontent.com/lukadev08/lukadev08.github.io/main/apidata/imdbtop250moviesdata.json";
-        URI host = URI.create(url);
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder(host).GET().build();
-        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-        String body = response.body();
+        ApiRequest api = new ApiRequest();
+        String body = api.body("https://raw.githubusercontent.com/alura-cursos/imersao-java-2-api/main/MostPopularMovies.json");
+        JsonParse parser = new JsonParse();
+        List<Map<String, String>> movieList = parser.parse(body);
 
-        System.out.println(body);
+        for (Map<String,String> movie : movieList) {
+            System.out.println("\u001b[36mName: \u001b[m\u001b[1m" + movie.get("title") + "\u001b[m ");
+            System.out.println("\u001b[36mPoster: \u001b[m\u001b[4m\u001b[34m" + movie.get("image") + "\u001b[m ");
+            System.out.print("\u001b[36mRating: \u001b[m" + movie.get("imDbRating") + " - ");
+            double rating = Double.parseDouble(movie.get("imDbRating"));
+            int stars = (int) rating;
+            for (int i = 1; i <= stars; i++) {
+                System.out.print("⭐");
+            }
+            System.out.println("\n");
+        }
     }
+    
 }
